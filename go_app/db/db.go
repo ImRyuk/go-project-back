@@ -1,19 +1,16 @@
 package db
 
 import (
-	"github.com/jmoiron/sqlx"
-	"github.com/go-sql-driver/mysql"
+	"database/sql"
+	"fmt"
+	"os"
+	_ "github.com/go-sql-driver/mysql"
 )
 
-func DbConnection() (*sqlx.DB, error) {
-	conf := mysql.Config{
-		User:                 "root",
-		Passwd:               "dbpassword",
-		Addr:                 "localhost:3306",
-		DBName:               "db_appointment",
-		AllowNativePasswords: true,
-	}
-	db, err := sqlx.Open("mysql", conf.FormatDSN())
+func DbConnection() (*sql.DB, error) {
+	db_conf := os.Getenv("MARIADB_USER")+ ":" + os.Getenv("MARIADB_ROOT_PASSWORD") + "@tcp(" + os.Getenv("MARIADB_HOST") + ":3306)/" + os.Getenv("MARIADB_DATABASE")
+	fmt.Println(db_conf)
+	db, err := sql.Open("mysql", db_conf)
 
 	if err != nil {
 		return nil, err
