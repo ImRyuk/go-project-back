@@ -6,32 +6,40 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go_app/db"
 	"go_app/utils"
+	"fmt"
 )
 
 func Login(c *fiber.Ctx) error {
 	var user model.User
+	
 	client, _ := db.DbConnection()
 	defer client.Close()
 
 	if err := c.BodyParser(&user); err != nil {
 		return err
 	}
+	bodyPassword := user.Password
 
-	err := client.QueryRow(db.REQ_LOGIN_USER, user.Email, user.Password).Scan(&user.Uid, &user.Email)
+	err := client.QueryRow(db.REQ_GET_USER_BY_MAIL, user.Email).Scan(&user.Uid, &user.Email, &user.FirstName, &user.LastName, &user.ROLE, &user.Password)
 	if err != nil {
 		return err
 	}
 
-	token, err := CreateJwt(user.Uid)
-	if err != nil {
-		return err
-	}
+	match := utils.CheckPasswordHash(bodyPassword, user.Password)
 
-	return c.JSON(fiber.Map{
-		"uid": user.Uid,
-		"email": user.Email,
-		"token": token,
-	})
+	if(match == true){
+		token, err := CreateJwt(user.Uid)
+		if err != nil {
+			return err
+		}
+		return c.JSON(fiber.Map{
+			"uid": user.Uid,
+			"email": user.Email,
+			"token": token,
+		})
+	}
+	c.Status(403)
+	return c.SendString("Invalid credentials")
 }
 
 func Register(c *fiber.Ctx) error {
@@ -46,7 +54,10 @@ func Register(c *fiber.Ctx) error {
     if es != nil {
         panic(es.Error())
     }
-    _, err := query.Exec(uuidUser, user.FirstName, user.LastName, user.Email, user.Password, user.ROLE)
+
+		hashedPassword, _ := utils.HashPassword(user.Password) 
+
+    _, err := query.Exec(uuidUser, user.FirstName, user.LastName, user.Email, hashedPassword, user.ROLE)
 		if err != nil {
 		return err
 	}
