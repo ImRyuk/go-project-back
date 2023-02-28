@@ -1,7 +1,6 @@
 package appointmentManagement
 
 import (
-    "fmt"
     "github.com/gofiber/fiber/v2"
 	"go_app/model"
 	"go_app/db"
@@ -67,7 +66,6 @@ func GetAppointmentsUser(c *fiber.Ctx) error {
     }
     uidUser := c.Params("uidUser")
     uidMatch := permissions.CheckUserUid(uidUserJwt, uidUser)
-    fmt.Println(uidUserJwt)
     if uidMatch == false {
         return c.Status(401).SendString("You don't have this auhtorisation")
     }

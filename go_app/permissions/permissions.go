@@ -1,6 +1,5 @@
 package permissions
 import (
-    "fmt"
 	"go_app/db"
 	"go_app/model"
 )
@@ -14,7 +13,6 @@ func VerifyRole(uidUser string, role string) (string,bool){
     if err != nil {
         return "", false
     }
-    fmt.Println(user.ROLE)
     if user.ROLE == role {
         return "EMPLOYEE_ROLE", true
     }
