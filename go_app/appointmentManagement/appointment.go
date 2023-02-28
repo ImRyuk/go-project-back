@@ -1,6 +1,7 @@
 package appointmentManagement
 
 import (
+    "fmt"
     "github.com/gofiber/fiber/v2"
 	"go_app/model"
 	"go_app/db"
@@ -66,15 +67,9 @@ func GetAppointmentsUser(c *fiber.Ctx) error {
     }
     uidUser := c.Params("uidUser")
     uidMatch := permissions.CheckUserUid(uidUserJwt, uidUser)
+    fmt.Println(uidUserJwt)
     if uidMatch == false {
         return c.Status(401).SendString("You don't have this auhtorisation")
-    }
-    authorisationUser := permissions.CheckUserUid(uidUserJwt, uidUser)
-    if authorisationUser == false {
-        if err != nil {
-            c.Status(401)
-            return err
-        }
     }
     rows, err := client.Query(db.REQ_GET_APPOINTMENTS_USER, uidUser)
     for rows.Next() {
@@ -125,7 +120,7 @@ func GetAppointmentsStore(c *fiber.Ctx) error {
 
     checkRoleUser := permissions.CheckRoleUserStore(uidUserJwt, uidStore)
     if checkRoleUser != true {
-        return c.Status(401).SendString("Vous n'avez les droits sur ce store")
+        return c.Status(401).SendString("You don't have authorisation, on this store")
     }
 
     rows, err := client.Query(db.REQ_GET_APPOINTMENTS_STORE, uidStore)
