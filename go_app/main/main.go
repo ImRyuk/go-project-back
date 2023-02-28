@@ -11,7 +11,7 @@ import (
 
 func main() {
 	app := fiber.New()
-	app.Get("/appointments-store/:uidStore", appointmentManagement.GetAppointmentsStore)
+	app.Get("/appointments-store/:storeUid", appointmentManagement.GetAppointmentsStore)
     app.Get("/appointments-user/:userUid", appointmentManagement.GetAppointmentsUser)
     app.Post("/service", storeManagement.CreateService)
     app.Post("/store", storeManagement.CreateStore)

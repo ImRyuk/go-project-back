@@ -65,8 +65,8 @@ type AppointmentsUser struct {
 
 
 type AppointmentsStore struct {
-	UidUser string `json:"uidUser"`
-	UidStore string `json:"uidStore"`
+	UserUid string `json:"userUid"`
+	StoreUid string `json:"storeuid"`
 	ServiceName string `json:"serviceName"`
 	DatetimeStart string`json:"datetimeStart"`
 	FirstName string `json:"firstName"`

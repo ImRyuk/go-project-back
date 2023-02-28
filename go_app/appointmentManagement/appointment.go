@@ -117,20 +117,20 @@ func GetAppointmentsStore(c *fiber.Ctx) error {
             return c.SendString("Authorization header is missing")
     }
 
-    uidUserJwt, err := authentication.VerifyJwt(authHeader)
+    userUidJwt, err := authentication.VerifyJwt(authHeader)
     if err != nil {
         c.Status(401)
         return err
     }
 
-    uidStore := c.Params("uidStore")
+    storeUid := c.Params("storeUid")
 
-    checkRoleUser := permissions.CheckRoleUserStore(uidUserJwt, uidStore)
+    checkRoleUser := permissions.CheckRoleUserStore(userUidJwt, storeUid)
     if checkRoleUser != true {
         return c.Status(401).SendString("You don't have authorisation, on this store")
     }
 
-    rows, err := client.Query(db.REQ_GET_APPOINTMENTS_STORE, uidStore)
+    rows, err := client.Query(db.REQ_GET_APPOINTMENTS_STORE, storeUid)
 
     for rows.Next() {
         var appointment model.AppointmentsStore
