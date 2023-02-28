@@ -9,6 +9,10 @@ const REQ_GET_USER = `
 	SELECT * from user
 	WHERE email=? and password=?`
 
+const REQ_GET_USER_BY_MAIL = `
+	SELECT * from user
+	WHERE email=?`
+
 const REQ_CREATE_USER = `
 	INSERT INTO user
 	(uid_user, first_name, last_name, email, password, ROLE)
@@ -65,6 +69,12 @@ const REQ_GET_PROFILE_USER = `
 	email, ROLE
 	FROM user
 	WHERE user.uid_user=?`
+
+const REQ_GET_STORE = `
+	SELECT uid_store as uid, name, type_store,
+	city, post_code, address
+	FROM store
+	WHERE store.uid_store=?`
 
 
 
