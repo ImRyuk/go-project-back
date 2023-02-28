@@ -14,7 +14,7 @@ const REQ_CREATE_USER = `
 	(uid_user, first_name, last_name, email, password, ROLE)
 	Values (?,?, ?, ?, ?, ?);`
 
-const REQ_GET_ROLE_USER = `
+const REQ_GET_USER_ROLE = `
 	SELECT uid_user, ROLE
 	from user WHERE uid_user=?`
 

@@ -5,37 +5,28 @@ import (
 )
 
 
-func VerifyRole(uidUser string, role string) bool {
+func VerifyRole(uidUser string, role string) (string,bool){
 	var user model.User
 	client, _ := db.DbConnection()
 	defer client.Close()
-    err := client.QueryRow(db.REQ_GET_ROLE_USER , uidUser).Scan(&user.Email, &user.ROLE)
-
+    err := client.QueryRow(db.REQ_GET_USER_ROLE , uidUser).Scan(&user.Email, &user.ROLE)
     if err != nil {
-        return false
+        return "", false
     }
-    if user.ROLE != role {
-    	return false
+    if user.ROLE == role {
+        return "EMPLOYEE_ROLE", true
     }
-    return true
+    if user.ROLE == "ADMIN_ROLE" {
+        return "ADMIN_ROLE", true
+    }
+
+    return "", false
 }
-
-// func VerifyUserIsAdmin(uidUser string) bool {
-//     var user model.User
-//     defer client.Close()
-//     err := client.QueryRow(db.REQ_GET_ROLE_USER , uidUser).Scan(&user.Email, &user.ROLE, &user.isAdmin)
-
-//     if err != nil {
-//         return false
-//     }
-//     if user.isAdmin!= true {
-//         return false
-//     }
-// }
 
 
 func CheckUserUid(uidUserJwt string, uidUser string) bool {
-    if uidUserJwt == uidUser {
+    _, isAuthorized := VerifyRole(uidUserJwt, "")
+    if isAuthorized == true || uidUserJwt == uidUser {
         return true
     }
     return false
@@ -43,13 +34,16 @@ func CheckUserUid(uidUserJwt string, uidUser string) bool {
 
 
 func CheckRoleUserStore(uidUser string, uidStore string) bool {
-    checkRole := VerifyRole(uidUser, "ROLE_EMPLOYER")
-    if checkRole != true {
+    userRole, isAuthorized := VerifyRole(uidUser, "EMPLOYEE_ROLE")
+
+    if isAuthorized != true {
         return false
     }
-    checkUserStore := CheckUserStore(uidUser, uidStore)
-    if checkUserStore != true {
-        return false
+    if userRole != "ADMIN_ROLE" {
+        checkUserStore := CheckUserStore(uidUser, uidStore)
+        if checkUserStore != true {
+            return false
+        }
     }
     return true
 }
@@ -67,5 +61,9 @@ func CheckUserStore(uidUser string, uidStore string) bool {
     }
     return true
 }
+
+
+
+
 
 
