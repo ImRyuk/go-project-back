@@ -71,7 +71,7 @@ const REQ_GET_PROFILE_USER = `
 	WHERE user.uid_user=?`
 
 const REQ_GET_STORE = `
-	SELECT uid_store as uid, name, type_store,
+	SELECT uid_store, name, type_store,
 	city, post_code, address
 	FROM store
 	WHERE store.uid_store=?`

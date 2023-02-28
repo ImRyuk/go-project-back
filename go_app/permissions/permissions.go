@@ -24,23 +24,23 @@ func VerifyRole(uidUser string, role string) (string,bool){
 }
 
 
-func CheckUserUid(uidUserJwt string, uidUser string) bool {
-    _, isAuthorized := VerifyRole(uidUserJwt, "")
-    if isAuthorized == true || uidUserJwt == uidUser {
+func CheckUserUid(userUidJwt string, userUid string) bool {
+    _, isAuthorized := VerifyRole(userUidJwt, "")
+    if isAuthorized == true || userUidJwt == userUid {
         return true
     }
     return false
 }
 
 
-func CheckRoleUserStore(uidUser string, uidStore string) bool {
-    userRole, isAuthorized := VerifyRole(uidUser, "EMPLOYEE_ROLE")
+func CheckRoleUserStore(userUid string, storeUid string) bool {
+    userRole, isAuthorized := VerifyRole(userUid, "EMPLOYEE_ROLE")
 
     if isAuthorized != true {
         return false
     }
     if userRole != "ADMIN_ROLE" {
-        checkUserStore := CheckUserStore(uidUser, uidStore)
+        checkUserStore := CheckUserStore(userUid, storeUid)
         if checkUserStore != true {
             return false
         }
@@ -52,7 +52,6 @@ func CheckUserStore(userUid string, storeUid string) bool {
     client, _ := db.DbConnection()
     defer client.Close()
     var userStore model.UserStore
-
     query, _ := client.Prepare(db.REQ_GET_USER_STORE)
 
     err := query.QueryRow(userUid, storeUid).Scan(&userStore.UserUid, &userStore.StoreUid)
