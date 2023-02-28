@@ -68,15 +68,24 @@ const REQ_GET_PROFILE_USER = `
 	SELECT uid_user as uid, first_name, last_name,
 	email, ROLE
 	FROM user
-	WHERE user.uid_user=?`
+	WHERE user.uid_user=?;`
 
 const REQ_GET_STORE = `
 	SELECT uid_store, name, type_store,
 	city, post_code, address
 	FROM store
-	WHERE store.uid_store=?`
+	WHERE store.uid_store=?;`
 
-
+const REQ_GET_STORES_BY_FILTER = `
+    SELECT uid_store, name, type_store,
+    city, post_code, address
+    FROM store
+    WHERE 1=1
+`
+const REQ_GET_STORES = `
+	SELECT uid_store, name,
+	type_store, city, post_code,
+	address FROM store`
 
 
 

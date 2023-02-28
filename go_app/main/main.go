@@ -17,6 +17,7 @@ func main() {
     app.Post("/service", storeManagement.CreateService)
     app.Post("/store", storeManagement.CreateStore)
     app.Get("/store/:storeUid", storeManagement.GetStore)
+    app.Get("/store", storeManagement.GetStores)
  	app.Post("/login", authentication.Login)
 	app.Post("/register",authentication.Register)
 	app.Get("/user/:userUid", userManagement.GetProfileUser)

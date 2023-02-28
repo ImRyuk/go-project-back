@@ -1,6 +1,7 @@
 package storeManagement
 
 import (
+    "fmt"
 	"go_app/model"
 	"github.com/gofiber/fiber/v2"
 	"go_app/db"
@@ -120,4 +121,61 @@ func GetStore(c *fiber.Ctx) error {
     })
 }
 
+func GetStores(c *fiber.Ctx) error {
+    var stores []model.Store
 
+    client, err := db.DbConnection()
+    if err != nil {
+        return err
+    }
+    defer client.Close()
+
+    filters := map[string]interface{}{
+        "type_store": c.Query("storeType"),
+        "name": c.Query("name"),
+        "city": c.Query("city"),
+        "post_code": c.Query("postCode"),
+        "address": c.Query("address"),
+    }
+
+    // Construire la requête SQL finalisée
+    var query string
+    var args []interface{}
+    for key, value := range filters {
+        if value != "" {
+            query += fmt.Sprintf(" AND %s = ?", key)
+            args = append(args, value)
+        }
+    }
+    if len(args) > 0 {
+        query = db.REQ_GET_STORES_BY_FILTER + query
+    } else {
+        query = db.REQ_GET_STORES
+    }
+
+    rows, err := client.Query(query, args...)
+    if err != nil {
+        return err
+    }
+    defer rows.Close()
+
+    for rows.Next() {
+        var store model.Store
+        err = rows.Scan(
+            &store.StoreUid,
+            &store.Name,
+            &store.StoreType,
+            &store.City,
+            &store.PostCode,
+            &store.Address,
+        )
+        if err != nil {
+            return err
+        }
+        stores = append(stores, store)
+    }
+
+    return c.JSON(fiber.Map{
+        "stores": stores,
+    })
+}

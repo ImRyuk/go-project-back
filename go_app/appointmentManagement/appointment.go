@@ -131,6 +131,7 @@ func GetAppointmentsStore(c *fiber.Ctx) error {
     }
 
     rows, err := client.Query(db.REQ_GET_APPOINTMENTS_STORE, storeUid)
+    fmt.Println("Requête envoyée :", db.REQ_GET_APPOINTMENTS_STORE, storeUid)
 
     for rows.Next() {
         var appointment model.AppointmentsStore
