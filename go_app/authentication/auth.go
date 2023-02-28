@@ -6,7 +6,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go_app/db"
 	"go_app/utils"
-	"fmt"
 )
 
 func Login(c *fiber.Ctx) error {
@@ -20,7 +19,7 @@ func Login(c *fiber.Ctx) error {
 	}
 	bodyPassword := user.Password
 
-	err := client.QueryRow(db.REQ_GET_USER_BY_MAIL, user.Email).Scan(&user.Uid, &user.Email, &user.FirstName, &user.LastName, &user.ROLE, &user.Password)
+	err := client.QueryRow(db.REQ_GET_USER_BY_MAIL, user.Email).Scan(&user.UserUid, &user.Email, &user.FirstName, &user.LastName, &user.ROLE, &user.Password)
 	if err != nil {
 		return err
 	}
@@ -28,12 +27,12 @@ func Login(c *fiber.Ctx) error {
 	match := utils.CheckPasswordHash(bodyPassword, user.Password)
 
 	if(match == true){
-		token, err := CreateJwt(user.Uid)
+		token, err := CreateJwt(user.UserUid)
 		if err != nil {
 			return err
 		}
 		return c.JSON(fiber.Map{
-			"uid": user.Uid,
+			"uid": user.UserUid,
 			"email": user.Email,
 			"token": token,
 		})
@@ -46,7 +45,7 @@ func Register(c *fiber.Ctx) error {
 	client, _ := db.DbConnection()
 	defer client.Close()
 	var user model.User
-	uuidUser := utils.GenerateUUID()
+	userUid := utils.GenerateUUID()
 	if err := c.BodyParser(&user); err != nil {
         return err
     }
@@ -57,13 +56,14 @@ func Register(c *fiber.Ctx) error {
 
 		hashedPassword, _ := utils.HashPassword(user.Password) 
 
-    _, err := query.Exec(uuidUser, user.FirstName, user.LastName, user.Email, hashedPassword, user.ROLE)
+    _, err := query.Exec(userUid, user.FirstName, user.LastName, user.Email, hashedPassword, user.ROLE)
 		if err != nil {
 		return err
 	}
     return c.JSON(fiber.Map {
-			"first_name": user.FirstName,
-			"last_name": user.LastName,
+    	    "userUid": user.UserUid,
+			"firstName": user.FirstName,
+			"lastName": user.LastName,
 			"email": user.Email,
 			"ROLE": user.ROLE,
 	})

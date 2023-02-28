@@ -48,14 +48,14 @@ func CheckRoleUserStore(uidUser string, uidStore string) bool {
     return true
 }
 
-func CheckUserStore(uidUser string, uidStore string) bool {
+func CheckUserStore(userUid string, storeUid string) bool {
     client, _ := db.DbConnection()
     defer client.Close()
     var userStore model.UserStore
 
     query, _ := client.Prepare(db.REQ_GET_USER_STORE)
 
-    err := query.QueryRow(uidUser, uidStore).Scan(&userStore.UidUser, &userStore.UidStore)
+    err := query.QueryRow(userUid, storeUid).Scan(&userStore.UserUid, &userStore.StoreUid)
     if err != nil {
         return false
     }
