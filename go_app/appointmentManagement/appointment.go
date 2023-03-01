@@ -22,7 +22,7 @@ func CreateAppointment(c *fiber.Ctx) error {
             return c.SendString("Authorization header is missing")
     }
 
-    uidUserJwt, err := authentication.VerifyJwt(authHeader)
+    userUidJwt, err := authentication.VerifyJwt(authHeader)
     if err != nil {
         c.Status(401)
         return err
@@ -31,21 +31,24 @@ func CreateAppointment(c *fiber.Ctx) error {
     if err := c.BodyParser(&appointment); err != nil {
         return err
     }
-    uidMatch := permissions.CheckUserUid(uidUserJwt, appointment.UidUser)
-    if uidMatch == false {
+    matchUser := permissions.CheckUserUid(userUidJwt, appointment.UserUid)
+    if matchUser == false {
         return c.Status(401).SendString("You don't have this auhtorisation")
     }
-    uuidAppointment := utils.GenerateUUID()
+    appointmentUid:= utils.GenerateUUID()
     query, _ := client.Prepare(db.REQ_CREATE_APPOINTMENT)
+    _, es := query.Exec(appointmentUid, appointment.DatetimeStart,
+        appointment.UserUid, appointment.ServiceUid)
 
-    _, es := query.Exec(
-    		uuidAppointment, appointment.DatetimeStart,
-     		appointment.UidUser, appointment.UidService)
     if es != nil {
-        c.Status(400)
-        return es
+        c.Status(400).SendString("Error while creating appointment")
     }
-    return c.Status(201).SendString("Appointement created")
+    return c.Status(201).JSON(fiber.Map {
+            "appointmentUid": appointmentUid,
+            "serviceUid": appointment.ServiceUid,
+            "datetimeStart": appointment.DatetimeStart,
+            "userUid": appointment.UserUid,
+    })
 }
 
 func GetAppointmentsUser(c *fiber.Ctx) error {
@@ -59,17 +62,17 @@ func GetAppointmentsUser(c *fiber.Ctx) error {
             return c.SendString("Authorization header is missing")
     }
 
-    uidUserJwt, err := authentication.VerifyJwt(authHeader)
+    userUidJwt, err := authentication.VerifyJwt(authHeader)
     if err != nil {
         c.Status(401)
         return err
     }
-    uidUser := c.Params("uidUser")
-    uidMatch := permissions.CheckUserUid(uidUserJwt, uidUser)
-    if uidMatch == false {
+    userUid := c.Params("userUid")
+    matchUser := permissions.CheckUserUid(userUidJwt, userUid)
+    if matchUser == false {
         return c.Status(401).SendString("You don't have this auhtorisation")
     }
-    rows, err := client.Query(db.REQ_GET_APPOINTMENTS_USER, uidUser)
+    rows, err := client.Query(db.REQ_GET_APPOINTMENTS_USER, userUid)
     for rows.Next() {
         var appointment model.AppointmentsUser
         err = rows.Scan(
@@ -81,7 +84,7 @@ func GetAppointmentsUser(c *fiber.Ctx) error {
             &appointment.City,
             &appointment.Address,
             &appointment.PostCode,
-            &appointment.TypeStore,
+            &appointment.StoreType,
 
         )
 
@@ -108,20 +111,20 @@ func GetAppointmentsStore(c *fiber.Ctx) error {
             return c.SendString("Authorization header is missing")
     }
 
-    uidUserJwt, err := authentication.VerifyJwt(authHeader)
+    userUidJwt, err := authentication.VerifyJwt(authHeader)
     if err != nil {
         c.Status(401)
         return err
     }
 
-    uidStore := c.Params("uidStore")
+    storeUid := c.Params("storeUid")
 
-    checkRoleUser := permissions.CheckRoleUserStore(uidUserJwt, uidStore)
+    checkRoleUser := permissions.CheckRoleUserStore(userUidJwt, storeUid)
     if checkRoleUser != true {
         return c.Status(401).SendString("You don't have authorisation, on this store")
     }
 
-    rows, err := client.Query(db.REQ_GET_APPOINTMENTS_STORE, uidStore)
+    rows, err := client.Query(db.REQ_GET_APPOINTMENTS_STORE, storeUid)
 
     for rows.Next() {
         var appointment model.AppointmentsStore

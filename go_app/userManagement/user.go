@@ -19,21 +19,21 @@ func GetProfileUser(c *fiber.Ctx) error {
             return c.SendString("Authorization header is missing")
     }
 
-    uidUserJwt, es := authentication.VerifyJwt(authHeader)
+    userUidJwt, es := authentication.VerifyJwt(authHeader)
     if es != nil {
         c.Status(401)
         return es
     }
 
 
-    uidUser := c.Params("uidUser")
-    uidMatch := permissions.CheckUserUid(uidUserJwt, uidUser)
-    if uidMatch == false {
+    userUid := c.Params("userUid")
+    matchUser := permissions.CheckUserUid(userUidJwt, userUid)
+    if matchUser == false {
         return c.Status(401).SendString("You don't have this auhtorisation")
     }
 
-    err := client.QueryRow(db.REQ_GET_PROFILE_USER, uidUser).Scan(
-            &profile.Uid,
+    err := client.QueryRow(db.REQ_GET_PROFILE_USER, userUid).Scan(
+            &profile.UserUid,
             &profile.FirstName,
             &profile.LastName,
             &profile.Email,
@@ -45,11 +45,11 @@ func GetProfileUser(c *fiber.Ctx) error {
     }
 
     return c.JSON(fiber.Map{
-        "uid": profile.Uid,
+        "userUid": profile.UserUid,
         "firstName": profile.FirstName,
         "lastName": profile.LastName,
         "email": profile.Email,
-        "role": profile.ROLE,
+        "ROLE": profile.ROLE,
 
     })
 }
