@@ -2,6 +2,7 @@ package utils
 
 import (
 	uuid "github.com/satori/go.uuid"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,4 +19,16 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
+}
+
+func MakeFilters(filters map[string]interface{}) (string, []interface{}) {
+    var query string
+    var args []interface{}
+    for key, value := range filters {
+        if value != "" {
+            query += fmt.Sprintf(" AND %s = ?", key)
+            args = append(args, value)
+        }
+    }
+    return query, args
 }

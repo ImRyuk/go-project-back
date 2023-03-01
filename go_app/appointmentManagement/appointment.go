@@ -7,7 +7,6 @@ import (
 	"go_app/utils"
     "go_app/permissions"
     "go_app/authentication"
-    "fmt"
 )
 
 func CreateAppointment(c *fiber.Ctx) error {

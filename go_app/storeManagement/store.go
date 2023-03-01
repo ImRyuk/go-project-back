@@ -1,7 +1,6 @@
 package storeManagement
 
 import (
-    "fmt"
 	"go_app/model"
 	"github.com/gofiber/fiber/v2"
 	"go_app/db"
@@ -138,15 +137,7 @@ func GetStores(c *fiber.Ctx) error {
         "address": c.Query("address"),
     }
 
-    // Construire la requête SQL finalisée
-    var query string
-    var args []interface{}
-    for key, value := range filters {
-        if value != "" {
-            query += fmt.Sprintf(" AND %s = ?", key)
-            args = append(args, value)
-        }
-    }
+    query, args := utils.MakeFilters(filters)
     if len(args) > 0 {
         query = db.REQ_GET_STORES_BY_FILTER + query
     } else {
