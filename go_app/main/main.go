@@ -15,14 +15,18 @@ func main() {
 	app.Post("/appointment", appointmentManagement.CreateAppointment)
 	app.Get("/appointments-store/:storeUid", appointmentManagement.GetAppointmentsStore)
     app.Get("/appointments-user/:userUid", appointmentManagement.GetAppointmentsUser)
+
     app.Post("/service", storeManagement.CreateService)
+    app.Get("/service/:storeUid", storeManagement.GetServices)
+
     app.Post("/store", storeManagement.CreateStore)
+
     app.Get("/store/:storeUid", storeManagement.GetStore)
     app.Get("/store", storeManagement.GetStores)
+
  	app.Post("/login", authentication.Login)
 	app.Post("/register",authentication.Register)
 	app.Post("/appointment", appointmentManagement.CreateAppointment)
-	app.Get("/user/:uidUser", userManagement.GetProfileUser)
 	app.Get("/user/:userUid", userManagement.GetProfileUser)
   // Allow CORS
 	app.Use(cors.New())

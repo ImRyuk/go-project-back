@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `user_has_store` (
 CREATE TABLE IF NOT EXISTS `service` (
   `uid_service` char(36) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
-  `duration` FLOAT NULL,
+  `duration` INT NULL,
   `price` FLOAT NOT NULL DEFAULT 0,
   `store_uid` char(36) NOT NULL,
   PRIMARY KEY (`uid_service`, `store_uid`),
@@ -96,6 +96,7 @@ CREATE TABLE IF NOT EXISTS `service` (
 CREATE TABLE IF NOT EXISTS `appointment` (
   `user_uid` char(36) NOT NULL,
   `datetime_start` DATETIME NOT NULL,
+  `datetime_end` DATETIME NOT NULL,
   `uid_appointment` char(36) NOT NULL,
   `service_uid` char(36) NOT NULL,
   PRIMARY KEY (`uid_appointment`),
@@ -112,6 +113,8 @@ CREATE TABLE IF NOT EXISTS `appointment` (
     REFERENCES `service` (`uid_service`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
+
 
 
 USE `db_appointment`;

@@ -42,12 +42,12 @@ const REQ_CREATE_USER_STORE = `
 
 const REQ_CREATE_APPOINTMENT = `
 	INSERT INTO appointment
-	(uid_appointment, datetime_start, user_uid, service_uid)
-	Values(?,?,?,?);`
+	(uid_appointment, datetime_start, datetime_end, user_uid, service_uid)
+	Values(?,?,?,?,?);`
 
 const REQ_GET_APPOINTMENTS_USER = `
 	SELECT service.name as service, service.duration,
-	service.price, appointment.datetime_start,
+	service.price, appointment.datetime_start, appointment.datetime_end,
 	store.name as store, store.city,
 	store.address, store.post_code,
 	store.type_store FROM appointment
@@ -58,7 +58,7 @@ const REQ_GET_APPOINTMENTS_USER = `
 const REQ_GET_APPOINTMENTS_STORE = `
 	SELECT service.name as service,
 	user.first_name, user.last_name,
-	user.email, appointment.datetime_start
+	user.email, appointment.datetime_start, appointment.datetime_end
 	FROM appointment
 	JOIN service ON (appointment.service_uid = service.uid_service)
 	JOIN user ON (appointment.user_uid = user.uid_user)
@@ -87,6 +87,21 @@ const REQ_GET_STORES = `
 	type_store, city, post_code,
 	address FROM store`
 
+const REQ_GET_SERVICE_BY_UID =`
+	SELECT uid_service, name, duration, price, store_uid
+	FROM service WHERE uid_service=?`
 
+const REQ_GET_SERVICE_BY_STORE =`
+	SELECT uid_service, name, duration, price, store_uid
+	FROM service WHERE store_uid=?`
+
+const REQ_CHECK_BOOKING_EXISTS = `
+	SELECT uid_appointment
+	FROM appointment
+	JOIN service ON (appointment.service_uid = service.uid_service)
+	WHERE datetime_start<=? and datetime_end>=?
+	and service.store_uid=?
+	or datetime_start>=? and datetime_start<=?
+	and service.store_uid=?`
 
 
