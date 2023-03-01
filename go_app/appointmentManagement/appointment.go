@@ -38,22 +38,17 @@ func CreateAppointment(c *fiber.Ctx) error {
     }
     appointmentUid:= utils.GenerateUUID()
     query, _ := client.Prepare(db.REQ_CREATE_APPOINTMENT)
-    fmt.Println(query)
-    fmt.Println("-----------")
-    _, es := query.Exec(
-    		appointmentUid, appointment.DatetimeStart,
-     		appointment.UserUid, appointment.ServiceUid)
+    _, es := query.Exec(appointmentUid, appointment.DatetimeStart,
+        appointment.UserUid, appointment.ServiceUid)
 
     if es != nil {
-        c.Status(400)
-        return es
+        c.Status(400).SendString("Error while creating appointment")
     }
     return c.Status(201).JSON(fiber.Map {
             "appointmentUid": appointmentUid,
             "serviceUid": appointment.ServiceUid,
             "datetimeStart": appointment.DatetimeStart,
             "userUid": appointment.UserUid,
-
     })
 }
 
@@ -131,7 +126,6 @@ func GetAppointmentsStore(c *fiber.Ctx) error {
     }
 
     rows, err := client.Query(db.REQ_GET_APPOINTMENTS_STORE, storeUid)
-    fmt.Println("Requête envoyée :", db.REQ_GET_APPOINTMENTS_STORE, storeUid)
 
     for rows.Next() {
         var appointment model.AppointmentsStore
