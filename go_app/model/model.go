@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-	Uid string`json:"uidUser"`
+	UserUid string`json:"userUid"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email string `json:"email"`
@@ -14,42 +14,32 @@ type User struct {
 }
 
 type Store struct {
-	Uid string `json:"uidStore"`
+	StoreUid string `json:"storeUid"`
 	Name string `json:"name"`
-	PostCode int16 `json:"postCode"`
+	PostCode int32 `json:"postCode"`
 	Address string `json:"address"`
 	City string `json:"city"`
-	TypeStore string `json:"typeStore"`
+	StoreType string `json:"storeType"`
 }
 
 type UserStore struct {
-	UidUser string `json:"uidUser"`
-	UidStore string `json:"uidStore"`
+	UserUid string `json:"userUid"`
+	StoreUid string `json:"storeUid"`
 }
 
 type Service struct {
-	Uid string `json:"uidService"`
+	ServiceUid string `json:"serviceUid"`
 	Duration float32 `json:"duration"`
 	Price float32 `json:"price"`
 	Name string `json:"name"`
-	UidStore string `json:"uidStore"`
+	StoreUid string `json:"storeUid"`
 }
 
 type Appointment struct {
-	Uid string `json:"uidAppointment"`
-	DatetimeStart time.Time `json:"DatetimeStart"`
-	UidService string `json:"uidService"`
-    UidUser string `json:"uidUser"`
-}
-
-type CreateStore struct {
-	UidUser string `json:"uidUser"`
-	StoreName string `json:"storeName"`
-	StoreType string `json:"StoreType"`
-	PostCode int16 `json:"postCode"`
-	Address string `json:"address"`
-	City string `json:"city"`
-	TypeStore string `json:"typeStore"`
+	AppointmentUid string `json:"appointmentUid"`
+	DatetimeStart time.Time `json:"datetimeStart"`
+	ServiceUid string `json:"serviceUid"`
+    UserUid string `json:"userUid"`
 }
 
 type CreateService struct {
@@ -61,44 +51,29 @@ type CreateService struct {
 }
 
 type AppointmentsUser struct {
-	UidUser string `json:"uidUser"`
-	ServiceName string `json:"Servicename"`
-	Duration float32 `json:"Duration"`
+	UserUid string `json: userUid"`
+	ServiceName string `json:"serviceName"`
+	Duration float32 `json:"duration"`
 	Price float32 `json:"price"`
-	DatetimeStart string`json:"DatetimeStart"`
+	DatetimeStart string`json:"datetimeStart"`
 	StoreName string `json:"storeName"`
 	City string `json:"city"`
 	Address string `json:"address"`
-	PostCode int16 `json:"postCode"`
-	TypeStore string `json:"typeStore"`
+	PostCode int32 `json:"postCode"`
+	StoreType string `json:"storeType"`
 }
 
 
 type AppointmentsStore struct {
-	UidUser string `json:"uidUser"`
-	UidStore string `json:"uidStore"`
-	ServiceName string `json:"Servicename"`
-	DatetimeStart string`json:"DatetimeStart"`
+	UserUid string `json:"userUid"`
+	StoreUid string `json:"storeuid"`
+	ServiceName string `json:"serviceName"`
+	DatetimeStart string`json:"datetimeStart"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email string `json:"email"`
 }
 
-
-type ProfileUser struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email string `json:"email"`
-	ServiceName string `json:"Servicename"`
-	DatetimeStart string`json:"DatetimeStart"`
-	Duration float32 `json:"Duration"`
-	Price float32 `json:"price"`
-	StoreName string `json:"storeName"`
-	City string `json:"city"`
-	Address string `json:"address"`
-	PostCode int16 `json:"postCode"`
-	TypeStore string `json:"typeStore"`
-}
 
 
 

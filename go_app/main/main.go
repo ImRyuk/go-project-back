@@ -11,13 +11,15 @@ import (
 
 func main() {
 	app := fiber.New()
-	app.Get("/appointments-store/:uidStore", appointmentManagement.GetAppointmentsStore)
-    app.Get("/appointments-user/:uidUser", appointmentManagement.GetAppointmentsUser)
+	app.Post("/appointment", appointmentManagement.CreateAppointment)
+	app.Get("/appointments-store/:storeUid", appointmentManagement.GetAppointmentsStore)
+    app.Get("/appointments-user/:userUid", appointmentManagement.GetAppointmentsUser)
     app.Post("/service", storeManagement.CreateService)
-    app.Post("/store", authentication.VerifyToken, storeManagement.CreateStore)
+    app.Post("/store", storeManagement.CreateStore)
+    app.Get("/store/:storeUid", storeManagement.GetStore)
+    app.Get("/store", storeManagement.GetStores)
  	app.Post("/login", authentication.Login)
 	app.Post("/register",authentication.Register)
-	app.Post("/appointment", appointmentManagement.CreateAppointment)
-	app.Get("/user/:uidUser", userManagement.GetProfileUser)
+	app.Get("/user/:userUid", userManagement.GetProfileUser)
 	app.Listen(":3000")
 }

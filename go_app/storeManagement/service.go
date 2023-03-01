@@ -11,11 +11,11 @@ import (
 
 
 func CreateService(c *fiber.Ctx) error {
-    var createService model.CreateService
+    var service model.Service
 	client, _ := db.DbConnection()
 	defer client.Close()
 
-    uuidService := utils.GenerateUUID()
+    serviceUid := utils.GenerateUUID()
 
     authHeader := c.Get("Authorization")
 
@@ -24,25 +24,30 @@ func CreateService(c *fiber.Ctx) error {
             return c.SendString("Authorization header is missing")
     }
 
-    uidUserJwt, err := authentication.VerifyJwt(authHeader)
+    userUidJwt, err := authentication.VerifyJwt(authHeader)
     if err != nil {
         c.Status(401)
         return err
     }
 
-    if err := c.BodyParser(&createService); err != nil {
+    if err := c.BodyParser(&service); err != nil {
         return err
     }
-    checkRoleUser := permissions.CheckRoleUserStore(uidUserJwt, createService.UidStore)
+    checkRoleUser := permissions.CheckRoleUserStore(userUidJwt, service.StoreUid)
     if checkRoleUser != true {
-        return c.Status(401).SendString("Vous n'avez les droits sur ce store")
+        return c.Status(401).SendString("You don't have permission to create a service for this store")
     }
     query, _ := client.Prepare(db.REQ_CREATE_SERVICE)
 
-    _, es := query.Exec(uuidService, createService.ServiceName, createService.UidStore, createService.Duration, createService.Price)
+    _, es := query.Exec(serviceUid, service.Name, service.StoreUid, service.Duration, service.Price)
     if es != nil {
-        return c.Status(400).SendString("Erreur lors de la création du service")
+        return c.Status(400).SendString("Error while creating service")
     }
-
-    return c.Status(201).SendString("Created service")
+    return c.Status(201).JSON(fiber.Map {
+            "serviceUid": serviceUid,
+            "storeUid": service.StoreUid,
+            "name": service.Name,
+            "duration": service.Duration,
+            "price": service.Price,
+    })
 }
