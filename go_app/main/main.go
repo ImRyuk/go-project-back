@@ -6,6 +6,7 @@ import (
 	"go_app/storeManagement"
 	"go_app/appointmentManagement"
 	"go_app/userManagement"
+	 "github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 
@@ -23,13 +24,13 @@ func main() {
 	app.Post("/appointment", appointmentManagement.CreateAppointment)
 	app.Get("/user/:uidUser", userManagement.GetProfileUser)
 	app.Get("/user/:userUid", userManagement.GetProfileUser)
-
   // Allow CORS
-	app.Use(func(c *fiber.Ctx) error {
-		c.Set("Access-Control-Allow-Origin", "*")
-		c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-		return c.Next()
-	})
+	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+    AllowOrigins:     "*",
+    AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
+    AllowHeaders:     "",
+    AllowCredentials: false,
+	}))
 	app.Listen(":3000")
 }
