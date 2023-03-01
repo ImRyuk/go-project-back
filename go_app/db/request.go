@@ -88,5 +88,9 @@ const REQ_GET_STORES = `
 	address FROM store`
 
 
+const REQ_GET_SERVICE_BY_STORE =`
+	SELECT uid_service, name, duration, price, store_uid
+	FROM service WHERE store_uid=?`
+
 
 

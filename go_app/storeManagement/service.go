@@ -51,3 +51,38 @@ func CreateService(c *fiber.Ctx) error {
             "price": service.Price,
     })
 }
+
+
+func GetServices(c *fiber.Ctx) error {
+    var services []model.Service
+    client, _ := db.DbConnection()
+    defer client.Close()
+
+
+    storeUid := c.Params("storeUid")
+
+    rows, err := client.Query(db.REQ_GET_SERVICE_BY_STORE, storeUid)
+
+    if err != nil {
+        return err
+    }
+
+    for rows.Next() {
+        var service model.Service
+        err = rows.Scan(
+            &service.ServiceUid,
+            &service.Name,
+            &service.Duration,
+            &service.Price,
+            &service.StoreUid,
+        )
+        if err != nil {
+            return err
+        }
+        services = append(services, service)
+    }
+
+    return c.JSON(fiber.Map{
+       "services": services,
+    })
+}
