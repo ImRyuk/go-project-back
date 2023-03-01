@@ -47,7 +47,7 @@ const REQ_CREATE_APPOINTMENT = `
 
 const REQ_GET_APPOINTMENTS_USER = `
 	SELECT service.name as service, service.duration,
-	service.price, appointment.datetime_start,
+	service.price, appointment.datetime_start, appointment.datetime_end,
 	store.name as store, store.city,
 	store.address, store.post_code,
 	store.type_store FROM appointment
@@ -58,7 +58,7 @@ const REQ_GET_APPOINTMENTS_USER = `
 const REQ_GET_APPOINTMENTS_STORE = `
 	SELECT service.name as service,
 	user.first_name, user.last_name,
-	user.email, appointment.datetime_start
+	user.email, appointment.datetime_start, appointment.datetime_end
 	FROM appointment
 	JOIN service ON (appointment.service_uid = service.uid_service)
 	JOIN user ON (appointment.user_uid = user.uid_user)

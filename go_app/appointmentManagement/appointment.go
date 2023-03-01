@@ -123,12 +123,12 @@ func GetAppointmentsUser(c *fiber.Ctx) error {
             &appointment.Duration,
             &appointment.Price,
             &appointment.DatetimeStart,
+            &appointment.DatetimeEnd,
             &appointment.StoreName,
             &appointment.City,
             &appointment.Address,
             &appointment.PostCode,
             &appointment.StoreType,
-
         )
 
         if err != nil {
@@ -177,6 +177,7 @@ func GetAppointmentsStore(c *fiber.Ctx) error {
             &appointment.LastName,
             &appointment.Email,
             &appointment.DatetimeStart,
+            &appointment.DatetimeEnd,
         )
         if err != nil {
             return err
