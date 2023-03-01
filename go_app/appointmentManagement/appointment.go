@@ -1,7 +1,6 @@
 package appointmentManagement
 
 import (
-    "fmt"
     "github.com/gofiber/fiber/v2"
 	"go_app/model"
 	"go_app/db"
@@ -80,7 +79,6 @@ func CreateAppointment(c *fiber.Ctx) error {
     }
 
     query, _ := client.Prepare(db.REQ_CREATE_APPOINTMENT)
-    fmt.Println(appointment.DatetimeStart)
     _, es := query.Exec(appointmentUid, appointment.DatetimeStart, datetimeEnd,
         appointment.UserUid, appointment.ServiceUid)
 
