@@ -63,7 +63,7 @@ func CreateStore(c *fiber.Ctx) error {
     }
 
     return c.Status(201).JSON(fiber.Map {
-            "storeUid": store.StoreUid,
+            "storeUid": storeUid,
             "name": store.Name,
             "postCode": store.PostCode,
             "address": store.Address,
@@ -170,3 +170,5 @@ func GetStores(c *fiber.Ctx) error {
         "stores": stores,
     })
 }
+
+

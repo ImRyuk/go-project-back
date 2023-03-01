@@ -29,7 +29,7 @@ type UserStore struct {
 
 type Service struct {
 	ServiceUid string `json:"serviceUid"`
-	Duration float32 `json:"duration"`
+	Duration int32 `json:"duration"`
 	Price float32 `json:"price"`
 	Name string `json:"name"`
 	StoreUid string `json:"storeUid"`
@@ -38,6 +38,7 @@ type Service struct {
 type Appointment struct {
 	AppointmentUid string `json:"appointmentUid"`
 	DatetimeStart time.Time `json:"datetimeStart"`
+	DatetimeEnd time.Time `json:"datetimeEnd"`
 	ServiceUid string `json:"serviceUid"`
     UserUid string `json:"userUid"`
 }

@@ -1,13 +1,49 @@
 package appointmentManagement
 
 import (
+    "fmt"
     "github.com/gofiber/fiber/v2"
 	"go_app/model"
 	"go_app/db"
 	"go_app/utils"
     "go_app/permissions"
     "go_app/authentication"
+    "time"
 )
+func ComputeEndDatetime(datetimeStart time.Time, serviceUid string) (time.Time, string) {
+    var service model.Service
+    client, _ := db.DbConnection()
+    defer client.Close()
+
+    client.QueryRow(db.REQ_GET_SERVICE_BY_UID, serviceUid).Scan(
+            &service.ServiceUid,
+            &service.Name,
+            &service.Duration,
+            &service.Price,
+            &service.StoreUid,
+    )
+
+    duration := time.Duration(service.Duration) * time.Minute
+    newTime := datetimeStart.Add(duration)
+    return newTime, service.StoreUid
+}
+
+func CheckAppointmentExist(
+    datetimeStart time.Time, datetimeEnd time.Time, storeUid string) bool {
+    var appointment model.Appointment
+    client, _ := db.DbConnection()
+    defer client.Close()
+    query, _ := client.Prepare(db.REQ_CHECK_BOOKING_EXISTS)
+    err := query.QueryRow(datetimeStart, datetimeStart, storeUid, datetimeStart, datetimeEnd, storeUid).Scan(
+        &appointment.AppointmentUid,
+    )
+    if err == nil {
+        // if err != nil: The booking already exists
+        return false
+    }
+    return true
+}
+
 
 func CreateAppointment(c *fiber.Ctx) error {
     var appointment model.Appointment
@@ -36,8 +72,16 @@ func CreateAppointment(c *fiber.Ctx) error {
         return c.Status(401).SendString("You don't have this auhtorisation")
     }
     appointmentUid:= utils.GenerateUUID()
+
+    datetimeEnd, storeUid := ComputeEndDatetime(appointment.DatetimeStart, appointment.ServiceUid)
+    appointmentExist := CheckAppointmentExist(appointment.DatetimeStart, datetimeEnd, storeUid)
+    if appointmentExist == false {
+        return c.Status(400).SendString("The booking for this store is not free")
+    }
+
     query, _ := client.Prepare(db.REQ_CREATE_APPOINTMENT)
-    _, es := query.Exec(appointmentUid, appointment.DatetimeStart,
+    fmt.Println(appointment.DatetimeStart)
+    _, es := query.Exec(appointmentUid, appointment.DatetimeStart, datetimeEnd,
         appointment.UserUid, appointment.ServiceUid)
 
     if es != nil {
@@ -47,6 +91,7 @@ func CreateAppointment(c *fiber.Ctx) error {
             "appointmentUid": appointmentUid,
             "serviceUid": appointment.ServiceUid,
             "datetimeStart": appointment.DatetimeStart,
+            "datetimeEnd": datetimeEnd,
             "userUid": appointment.UserUid,
     })
 }
