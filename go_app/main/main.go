@@ -19,5 +19,12 @@ func main() {
 	app.Post("/register",authentication.Register)
 	app.Post("/appointment", appointmentManagement.CreateAppointment)
 	app.Get("/user/:uidUser", userManagement.GetProfileUser)
+	// Allow CORS
+	app.Use(func(c *fiber.Ctx) error {
+		c.Set("Access-Control-Allow-Origin", "*")
+		c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		return c.Next()
+	})
 	app.Listen(":3000")
 }
