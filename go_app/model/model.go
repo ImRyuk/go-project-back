@@ -21,6 +21,15 @@ type Store struct {
 	City string `json:"city"`
 	StoreType string `json:"storeType"`
 }
+type StoreUser struct {
+	UserUid string `json:"userUid"`
+	StoreUid string `json:"storeUid"`
+	Name string `json:"name"`
+	PostCode int32 `json:"postCode"`
+	Address string `json:"address"`
+	City string `json:"city"`
+	StoreType string `json:"storeType"`
+}
 
 type UserStore struct {
 	UserUid string `json:"userUid"`
@@ -41,14 +50,6 @@ type Appointment struct {
 	DatetimeEnd time.Time `json:"datetimeEnd"`
 	ServiceUid string `json:"serviceUid"`
     UserUid string `json:"userUid"`
-}
-
-type CreateService struct {
-	UidUser string `json:"uidUser"`
-	ServiceName string `json:"Servicename"`
-	Duration float32 `json:"duration"`
-	Price float32 `json:"price"`
-	UidStore string `json:"uidStore"`
 }
 
 type AppointmentsUser struct {
