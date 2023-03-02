@@ -171,4 +171,58 @@ func GetStores(c *fiber.Ctx) error {
     })
 }
 
+func GetStoreUser(c *fiber.Ctx) error {
+    var stores []model.StoreUser
+
+    client, _ := db.DbConnection()
+    defer client.Close()
+
+    authHeader := c.Get("Authorization")
+
+    if authHeader == "" {
+            c.Status(401)
+            return c.SendString("Authorization header is missing")
+    }
+
+    userUidJwt, es := authentication.VerifyJwt(authHeader)
+    if es != nil {
+        c.Status(401)
+        return es
+    }
+
+    userUid := c.Params("userUid")
+
+    matchUserUid := permissions.CheckUserUid(userUidJwt, userUid)
+    if matchUserUid == false {
+        return c.Status(401).SendString("You don't have this auhtorisation")
+    }
+
+    rows, err := client.Query(db.REQ_GET_STORES_BY_USER, userUid)
+
+    if err != nil {
+        return err
+    }
+
+    for rows.Next() {
+        var store model.StoreUser
+        err = rows.Scan(
+            &store.UserUid,
+            &store.StoreUid,
+            &store.Name,
+            &store.StoreType,
+            &store.City,
+            &store.PostCode,
+            &store.Address,
+        )
+        if err != nil {
+            return err
+        }
+        stores = append(stores, store)
+    }
+
+    return c.JSON(fiber.Map{
+        "stores": stores,
+    })
+}
+
 

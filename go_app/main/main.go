@@ -23,10 +23,10 @@ func main() {
 
     app.Get("/store/:storeUid", storeManagement.GetStore)
     app.Get("/store", storeManagement.GetStores)
+    app.Get("/store-user/:userUid", storeManagement.GetStoreUser)
 
  	app.Post("/login", authentication.Login)
 	app.Post("/register",authentication.Register)
-	app.Post("/appointment", appointmentManagement.CreateAppointment)
 	app.Get("/user/:userUid", userManagement.GetProfileUser)
   // Allow CORS
 	app.Use(cors.New())

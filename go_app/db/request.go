@@ -105,3 +105,12 @@ const REQ_CHECK_BOOKING_EXISTS = `
 	and service.store_uid=?`
 
 
+const REQ_GET_STORES_BY_USER = `
+    SELECT  user.uid_user as user_uid, store.uid_store as store_uid, store.name, store.type_store,
+    store.city, store.post_code, store.address
+    FROM user_has_store
+    JOIN user ON (user_has_store.user_uid = user.uid_user)
+    JOIN store ON (user_has_store.store_uid = store.uid_store)
+    WHERE user_has_store.user_uid=?
+`
+
