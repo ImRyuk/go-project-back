@@ -6,11 +6,8 @@ services:
     restart: always
     ports:
       - '3306:3306'
-    environment:
-      MARIADB_ROOT_PASSWORD: dbpassword
-      MARIADB_USER: root
-      MARIADB_DATABASE: db_appointment
-      MARIADB_HOST: database
+    env_file:
+      - env-variables.env
     volumes:
       - ./scripts/migrations.sql:/docker-entrypoint-initdb.d/1.sql
     networks:
@@ -22,11 +19,8 @@ services:
     restart: on-failure
     ports:
       - '3000:3000'
-    environment:
-      MARIADB_ROOT_PASSWORD: dbpassword
-      MARIADB_USER: root
-      MARIADB_DATABASE: db_appointment
-      MARIADB_HOST: database
+    env_file:
+      - env-variables.env
     networks:
       - application
     depends_on:
